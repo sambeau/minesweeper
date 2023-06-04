@@ -25,8 +25,8 @@ export function Minesweeper() {
 	const initialGameState = {
 		width: 8,
 		height: 8,
-		bombs: 10, // I find bombs easier to see in code 
-		flagsLeft: 10, // bombs and flagsLeft should be the same
+		bombs: 4, // I find bombs easier to see in code 
+		flagsLeft: 4, // bombs and flagsLeft should be the same
 		result: "waiting", // "waiting", "playing", "win", "lose"
 		board: []
 	}
@@ -44,10 +44,12 @@ export function Minesweeper() {
 	const [gameState, setGameState] = useState(initialiseGameState(initialGameState))
 	const [scaredFace, setScaredFace] = useState(false)
 	const timeTaken = useCounter(0) // { count, setCount, increment, decrement, reset } 
+	const [isExploding, setIsExploding] = useState(false);
 
 	const resetGame = () => {
 		setGameState(initialiseGameState(initialGameState))
 		timeTaken.reset()
+		setIsExploding(false)
 	}
 
 	const doOnTick = () => {
@@ -64,11 +66,13 @@ export function Minesweeper() {
 				timeTaken={timeTaken.count}
 				resetGame={resetGame}
 				scaredFace={scaredFace}
+				isExploding={isExploding}
 			>
 				<Board
 					gameState={gameState}
 					setGameState={setGameState}
 					setScaredFace={setScaredFace}
+					setIsExploding={setIsExploding}
 				/>
 			</Window>
 		</>

@@ -120,7 +120,7 @@ export function newBoard(gameState) {
 	return board
 }
 
-function plantFlag(h, w, gameState, setGameState) {
+function plantFlag(h, w, gameState, setGameState, setIsExploding) {
 
 	// have we already checked this square?
 	if (gameState.board[h].squares[w].state === "SEEN") return;
@@ -178,6 +178,7 @@ function plantFlag(h, w, gameState, setGameState) {
 						// YAY! YOU'VE WON!
 						//
 						gameState.result = "win"
+						setIsExploding(true)
 						//
 						// Update the board for the losing state
 						// reveal all the hidden squares
@@ -210,6 +211,8 @@ function clickSquare(h, w, gameState, setGameState) {
 	if (gameState.board[h].squares[w].state === "FLAGGED") return;
 
 	// okay, it's valid, so open it
+
+	// we could do something fancy here…
 
 	setGameState(prevGameState => {
 
@@ -278,7 +281,7 @@ function clickSquare(h, w, gameState, setGameState) {
 	})
 }
 
-function Square({ square, gameState, setGameState, setScaredFace }) {
+function Square({ square, gameState, setGameState, setScaredFace, setIsExploding }) {
 	let tile
 	let classes = "square"
 	const { w, h } = square.coords
@@ -298,9 +301,10 @@ function Square({ square, gameState, setGameState, setScaredFace }) {
 				clickSquare(h, w, gameState, setGameState)
 				e.preventDefault()
 			}}
-			// right-click to place a flag
+
+			// right-click to place a flag 
 			onContextMenu={(e) => {
-				plantFlag(h, w, gameState, setGameState)
+				plantFlag(h, w, gameState, setGameState, setIsExploding)
 				e.preventDefault()
 			}}
 			// show a scared face when mouse pressed on an unturned tile
@@ -339,7 +343,7 @@ function Square({ square, gameState, setGameState, setScaredFace }) {
 		<img alt="" src={tile} /></div>
 }
 
-export function Board({ gameState, setGameState, setScaredFace }) {
+export function Board({ gameState, setGameState, setScaredFace, setIsExploding }) {
 
 	return <div className="board">
 		{gameState.board.map((row) =>
@@ -350,6 +354,8 @@ export function Board({ gameState, setGameState, setScaredFace }) {
 						gameState={gameState}
 						setGameState={setGameState}
 						setScaredFace={setScaredFace}
+						setIsExploding={setIsExploding}
+
 						key={square.id} />
 				)
 			}</div>

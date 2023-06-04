@@ -44,6 +44,13 @@
 	left: 30px;
 }
 
+.window>header>.confetti {
+	position: absolute;
+
+	top: 50%;
+	left: 50%;
+}
+
 .window>main {
 	background-image:
 		url(./images/window-left-bg.png),
