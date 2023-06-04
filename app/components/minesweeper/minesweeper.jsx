@@ -25,8 +25,8 @@ export function Minesweeper() {
 	const initialGameState = {
 		width: 8,
 		height: 8,
-		bombs: 4, // I find bombs easier to see in code 
-		flagsLeft: 4, // bombs and flagsLeft should be the same
+		bombs: 10, // I find bombs easier to see in code 
+		flagsLeft: 10, // bombs and flagsLeft should be the same
 		result: "waiting", // "waiting", "playing", "win", "lose"
 		board: []
 	}
