@@ -34,6 +34,9 @@ export function links() {
 	return [{ rel: "stylesheet", href: styles }];
 }
 
+//
+// All the complicated game logic lives here…
+//
 
 export function newBoard(gameState) {
 
@@ -186,7 +189,7 @@ function plantFlag(h, w, gameState, setGameState) {
 }
 
 function clickSquare(h, w, gameState, setGameState) {
-	// console.log("click!")
+
 	// is this square offf the board?
 	if ((h < 0) || (h >= gameState.height)) return
 	if ((w < 0) || (w >= gameState.width)) return

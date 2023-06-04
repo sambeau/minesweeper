@@ -7,6 +7,9 @@ export function links() {
 	return [...smileyStyles(), ...counterStyles(), { rel: "stylesheet", href: styles }];
 }
 
+//
+// Draw the game window around the main board, passing on state to all the graphical bits
+//
 export function Window({ gameState, timeTaken, resetGame, scaredFace, children }) {
 	let mood = "happy"
 	if (gameState.result === "win") mood = "cool"

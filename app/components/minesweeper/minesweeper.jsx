@@ -22,7 +22,7 @@ export function Minesweeper() {
 	const initialGameState = {
 		width: 8,
 		height: 8,
-		bombs: 10,
+		bombs: 10, // I find bombs easier to see in code 
 		flagsLeft: 10, // bombs and flagsLeft should be the same
 		result: "playing", // "playing", "win", "lose" // TODO: add waiting
 		board: []
@@ -35,7 +35,8 @@ export function Minesweeper() {
 		return gameState
 	}
 
-	// All the shared state. I might combine game and board them to make joint updates easier
+	//
+	// All the shared state lives here
 	//
 	const [gameState, setGameState] = useState(initialiseGameState(initialGameState))
 	const [scaredFace, setScaredFace] = useState(false)
