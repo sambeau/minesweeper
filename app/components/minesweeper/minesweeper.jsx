@@ -24,7 +24,7 @@ export function Minesweeper() {
 		height: 8,
 		bombs: 10, // I find bombs easier to see in code 
 		flagsLeft: 10, // bombs and flagsLeft should be the same
-		result: "playing", // "playing", "win", "lose" // TODO: add waiting
+		result: "waiting", // "waiting", "playing", "win", "lose"
 		board: []
 	}
 
