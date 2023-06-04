@@ -118,7 +118,7 @@ function plantFlag(h, w, gameState, setGameState) {
 				gameState.flagsLeft = prevState.flagsLeft - 1
 
 				if (gameState.flagsLeft === 0) {
-					console.log("Checking flags to see if won…")
+					// console.log("Checking flags to see if won…")
 					//check if you've won!
 					let correctFlags = 0;
 					for (let h = 0; h < gameState.height; h++) {
@@ -134,7 +134,7 @@ function plantFlag(h, w, gameState, setGameState) {
 						}
 					}
 
-					console.log(correctFlags, "flags, ", prevState.bombs, "bombs")
+					// console.log(correctFlags, "flags, ", prevState.bombs, "bombs")
 					if (correctFlags === prevState.bombs) {
 						gameState.result = "win"
 						// reveal all the hidden squares
@@ -153,7 +153,7 @@ function plantFlag(h, w, gameState, setGameState) {
 }
 
 function clickSquare(h, w, gameState, setGameState) {
-	console.log("click!")
+	// console.log("click!")
 	// is this square offf the board?
 	if ((h < 0) || (h >= gameState.height)) return
 	if ((w < 0) || (w >= gameState.width)) return
@@ -247,12 +247,12 @@ function Square({ square, gameState, setGameState, setScaredFace }) {
 			onMouseDown={(e) => {
 				if (e.button === 0) {
 					// left click only
-					console.log("scared face")
+					// console.log("scared face")
 					setScaredFace(true)
 				}
 			}}
 			onMouseUp={(e) => {
-				console.log("happy face")
+				// console.log("happy face")
 				setScaredFace(false)
 			}}
 		>
