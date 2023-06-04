@@ -1,0 +1,15 @@
+img.smiley {
+	display: block;
+	/*2.4rem */
+	width: 48px;
+	height: 48px;
+	cursor: pointer;
+}
+
+img.smiley:active {
+	content: url(./images/happy-down.png);
+}
+
+img.smiley.scared {
+	content: url(./images/scared.png);
+}

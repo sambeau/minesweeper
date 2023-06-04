@@ -1,0 +1,69 @@
+.window {
+	display: inline-grid;
+	background-color: #c0c0c0;
+	box-shadow: 0 20px 20px rgba(0, 0, 0, 0.5);
+}
+
+.window>header {
+	/* 5.5rem == 440px */
+	height: 110px;
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+	background-image:
+		url(./images/window-top-left.png),
+		url(./images/window-top-right.png),
+		url(./images/window-top-center.png),
+		url(./images/window-top-bg.png);
+	background-repeat: no-repeat, no-repeat, no-repeat,
+		repeat-x;
+	background-position: top left, top right, top center,
+		top left;
+	background-size: contain;
+}
+
+.window>header>.smiley {
+	position: relative;
+	width: 48px;
+	height: auto;
+	top: 1px;
+}
+
+.window>header>.score {
+	position: absolute;
+
+	top: 32px;
+	right: 34px;
+}
+
+.window>header>.timer {
+	position: absolute;
+
+	top: 32px;
+	left: 30px;
+}
+
+.window>main {
+	background-image:
+		url(./images/window-left-bg.png),
+		url(./images/window-right-bg.png);
+	background-size: 24px, 16px;
+	background-repeat: repeat-y;
+	background-position: top left, top right;
+	background-color: #c0c0c0;
+	padding-right: 16px;
+	padding-left: 24px;
+	background-color: hotpink;
+}
+
+.window>footer {
+	height: 16px;
+	background-image:
+		url(./images/window-bottom-left.png),
+		url(./images/window-bottom-right.png),
+		url(./images/window-bottom-bg.png);
+	background-size: 24px 16px, 16px 16px, 24px 16px;
+	background-repeat: no-repeat, no-repeat, repeat-x;
+	background-position: bottom left, bottom right, bottom left;
+}

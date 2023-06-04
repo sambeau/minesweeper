@@ -1,0 +1,30 @@
+.board {
+	display: block;
+}
+
+/* 1.6em == 32px*/
+
+.row {
+	display: flex;
+	height: 1.6em;
+}
+
+.square {
+	display: block;
+	width: 1.6em;
+	height: 1.6em;
+}
+
+.square>img {
+	display: block;
+	width: 1.6em;
+	height: 1.6em;
+}
+
+.square.clickable:active>img {
+	transform: rotate(180deg);
+}
+
+.square.clickable {
+	cursor: pointer;
+}

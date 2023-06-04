@@ -1,0 +1,9 @@
+.counter {
+	display: inline-grid;
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+.counter>img.digit {
+	height: 46px;
+	width: auto;
+}
