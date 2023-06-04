@@ -24,28 +24,35 @@ export function Minesweeper() {
 		height: 8,
 		bombs: 4,
 		flagsLeft: 4, // bombs and flagsLeft should be the same
-		result: "playing" // "playing", "win", "lose"
+		result: "playing", // "playing", "win", "lose" // TODO: add waiting
+		board: []
+	}
+
+	// initialise board
+	const initialiseGameState = (startingState) => {
+		let gameState = startingState
+		gameState.board = newBoard(startingState)
+		return gameState
 	}
 
 	// All the shared state. I might combine game and board them to make joint updates easier
 	//
-	const [gameState, setGameState] = useState(initialGameState)
-	const [board, setBoard] = useState(newBoard(gameState))
+	const [gameState, setGameState] = useState(initialiseGameState(initialGameState))
 	const [scaredFace, setScaredFace] = useState(false)
 	const timeTaken = useCounter(0) // { count, setCount, increment, decrement, reset } 
+
+	const resetGame = () => {
+		console.log('reset!')
+		setGameState(initialiseGameState(initialGameState))
+		timeTaken.reset()
+	}
 
 	const doOnTick = () => {
 		if (gameState.result === "playing")
 			timeTaken.increment()
 	}
-	useTimer(doOnTick, [gameState.result, timeTaken])
 
-	const resetGame = () => {
-		console.log('reset!')
-		setBoard(newBoard(gameState))
-		setGameState(initialGameState)
-		timeTaken.reset()
-	}
+	useTimer(doOnTick, [gameState.result, timeTaken])
 
 	return (
 		<>
@@ -58,8 +65,6 @@ export function Minesweeper() {
 				<Board
 					gameState={gameState}
 					setGameState={setGameState}
-					board={board}
-					setBoard={setBoard}
 					setScaredFace={setScaredFace}
 				/>
 			</Window>
