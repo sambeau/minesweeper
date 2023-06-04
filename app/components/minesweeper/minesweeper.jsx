@@ -43,7 +43,6 @@ export function Minesweeper() {
 	const timeTaken = useCounter(0) // { count, setCount, increment, decrement, reset } 
 
 	const resetGame = () => {
-		console.log('reset!')
 		setGameState(initialiseGameState(initialGameState))
 		timeTaken.reset()
 	}
