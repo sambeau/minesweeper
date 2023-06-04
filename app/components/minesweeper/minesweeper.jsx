@@ -20,13 +20,13 @@ export function Minesweeper() {
 	// Beginner (8x8, 10 mines), Intermediate (16x16, 40 mines) and Expert (24x24, 99 mines)
 	// So a ratio of 16/100 bomb sqaures
 	//
-	// I'm going 10x!0 with 12 bombs as it's a little more casual. More fun for a portfolio,
+	// I'm going 8x8/10 as it's a little more casual. More fun for a portfolio,
 	//
 	const initialGameState = {
-		width: 10,
-		height: 10,
-		bombs: 12, // I find bombs easier to see in code 
-		flagsLeft: 12, // bombs and flagsLeft should be the same
+		width: 8,
+		height: 8,
+		bombs: 10, // I find bombs easier to see in code 
+		flagsLeft: 10, // bombs and flagsLeft should be the same
 		result: "waiting", // "waiting", "playing", "win", "lose"
 		board: []
 	}
