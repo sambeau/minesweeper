@@ -36,55 +36,81 @@ export function links() {
 
 
 export function newBoard(gameState) {
+
+	// set upo the constants
 	const width = gameState.width;
 	const height = gameState.height;
 	const bombs = gameState.bombs
 	let board = []
 
-	const countMines = (h, w) => {
-		let mines = 0;
+	// count the bombs around a square
+	const countBombs = (h, w) => {
+		let bombs = 0;
 
+		// helper functions
+		// is there a bomb in this square?
 		const isBomb = (h, w) => board[h].squares[w].contents === "BOMB"
-		const mineIn = (h, w) => {
-			if ((h < 0) || (h > height - 1)) return 0
-			if ((w < 0) || (w > width - 1)) return 0
+		// Is there be a bomb at these (possibly invalid) coordinates
+
+		// if a square has a bomb in it, it scores 1
+		// If a  doesn't or if it's off the board, score it 0
+		const scoreSquare = (h, w) => {
+			// first, check if the coords are off the board
+			if ((h < 0) || (h > height - 1)) return 0 // invalid, scores 0
+			if ((w < 0) || (w > width - 1)) return 0 // invalid, scores 0
+
+			// if it's a bomb, score it as +1
 			return isBomb(h, w) ? 1 : 0
 		}
 
-		mines += mineIn(h - 1, w - 1) + mineIn(h - 1, w) + mineIn(h - 1, w + 1)
-		mines += mineIn(h, w - 1) + 0 + mineIn(h, w + 1)
-		mines += mineIn(h + 1, w - 1) + mineIn(h + 1, w) + mineIn(h + 1, w + 1)
+		// a square's score is the sum off all the 8 sqaures around it
+		// the square itself always scores 0 as we already know its empty
+		// (as only empty sqaures get scores)
+		bombs += scoreSquare(h - 1, w - 1) + scoreSquare(h - 1, w) + scoreSquare(h - 1, w + 1)
+		bombs += scoreSquare(h, w - 1) + 0 + scoreSquare(h, w + 1)
+		bombs += scoreSquare(h + 1, w - 1) + scoreSquare(h + 1, w) + scoreSquare(h + 1, w + 1)
 
-		return mines
+		return bombs
 	}
 
+	//
 	// initialise board
+	//
+
+	/// First, empty out all the squares
 	for (let h = 0; h < height; h++) {
 		board[h] = { id: h, squares: [] }
 		for (let w = 0; w < width; w++) {
 			board[h].squares[w] = {
+				// React needs IDs to use as keys
 				id: h + "_" + w,
+				// Everyone needs to have access to a square's coordinates
 				coords: { h: h, w: w },
+				// initial state
 				contents: "EMPTY", // "EMPTY", "BOMB", 'WRONG' or "CRATER"
 				state: "HIDDEN", // "HIDDEN", "FLAGGED", "SEEN"
 			}
 		}
 	}
 
-	// randomly place bombs 
+	// randomly place bombs, using a simple retry method
 	let bombsleft = bombs;
 	while (bombsleft > 0) {
+		// choose a random square
 		const w = Math.floor(Math.random() * width)
 		const h = Math.floor(Math.random() * height)
-		if (board[h].squares[w].contents === "BOMB") continue; // choose again
+		// if the square already has a bomb in it, try another square
+		if (board[h].squares[w].contents === "BOMB") continue; // go back & choose again
+		// put a bomb here
 		board[h].squares[w].contents = "BOMB"
+		// now you have one fewer bombs to place
 		bombsleft = bombsleft - 1
 	}
 
-	// calculate scores
+	// calculate scores for each square
 	for (let h = 0; h < height; h++) {
 		for (let w = 0; w < width; w++) {
-			board[h].squares[w].score = countMines(h, w)
+			board[h].squares[w].score = countBombs(h, w)
 		}
 	}
 
@@ -98,7 +124,7 @@ function plantFlag(h, w, gameState, setGameState) {
 
 	setGameState(prevState => {
 		// update game state to account for the flag
-		gameState = JSON.parse(JSON.stringify(prevState))
+		gameState = JSON.parse(JSON.stringify(prevState))  // quick & dirty deep copy
 
 		// flagging has more to it than first appears :-
 		//
@@ -108,35 +134,42 @@ function plantFlag(h, w, gameState, setGameState) {
 		// 4) Once we place our final flag, we need to check if we've won the game
 
 		if (gameState.board[h].squares[w].state === "FLAGGED") {
-			// if (prevState.flagsLeft < prevState.bombs)
+			// already flagged
+			// remove the flag
 			gameState.board[h].squares[w].state = "HIDDEN"
 			gameState.flagsLeft = prevState.flagsLeft + 1
 		} else {
-			/* not flagged */
+			// not flagged
+			// add a flag if there's one left to use
 			if (prevState.flagsLeft > 0) {
 				gameState.board[h].squares[w].state = "FLAGGED"
 				gameState.flagsLeft = prevState.flagsLeft - 1
 
+				// if all  flags are used, check to see if you've won
 				if (gameState.flagsLeft === 0) {
-					// console.log("Checking flags to see if won…")
-					//check if you've won!
+
+					// chack all the squares with flags
+					// count up all the ones with bombs under them
 					let correctFlags = 0;
 					for (let h = 0; h < gameState.height; h++) {
 						for (let w = 0; w < gameState.width; w++) {
-
-							if (gameState.board[h].squares[w].state === "FLAGGED") { // state hasn't updated yet
-								//TODO: DEAL WITH LAST HIDDEN
+							if (gameState.board[h].squares[w].state === "FLAGGED") {
 								if (gameState.board[h].squares[w].contents === "BOMB") {
+									// this is a correct guess!
 									correctFlags = correctFlags + 1
 								}
 
 							}
 						}
 					}
-
-					// console.log(correctFlags, "flags, ", prevState.bombs, "bombs")
+					// If al your flags are correct, then you've won
 					if (correctFlags === prevState.bombs) {
+						//
+						// YAY! YOU'VE WON!
+						//
 						gameState.result = "win"
+						//
+						// Update the board for the losing state
 						// reveal all the hidden squares
 						for (let h = 0; h < gameState.height; h++)
 							for (let w = 0; w < gameState.width; w++)
@@ -165,26 +198,29 @@ function clickSquare(h, w, gameState, setGameState) {
 	if (gameState.board[h].squares[w].state === "FLAGGED") return;
 
 	// okay, it's valid, so open it
-	// let newBoard = JSON.parse(JSON.stringify(board)
+
 	setGameState(prevGameState => {
 
-		gameState = JSON.parse(JSON.stringify(prevGameState))
+		gameState = JSON.parse(JSON.stringify(prevGameState)) // quick & dirty deep copy
 		gameState.board[h].squares[w].state = "SEEN"
 
 		if (gameState.board[h].squares[w].contents === "BOMB") {
-
-			// BOOM!
+			//
+			// BOOM! YOU HAVE LOST
+			//
 			gameState.board[h].squares[w].contents = "CRATER"
 			gameState.result = "lose"
-
+			//
+			// Update the board for the losing state
 			for (let h = 0; h < gameState.height; h++) {
 				for (let w = 0; w < gameState.width; w++) {
 
+					// Mark where flags were put in the wrong places
 					if ((prevGameState.board[h].squares[w].state === "FLAGGED")
 						&& (prevGameState.board[h].squares[w].contents !== "BOMB")) {
 						gameState.board[h].squares[w].contents = "WRONG"
 					}
-
+					// Reveal all the hidden tiles
 					if (prevGameState.board[h].squares[w].state === "FLAGGED"
 						|| prevGameState.board[h].squares[w].state === "HIDDEN") {
 						gameState.board[h].squares[w].state = "SEEN"
@@ -201,7 +237,7 @@ function clickSquare(h, w, gameState, setGameState) {
 	// so we'll need a game state passed in to end the game
 	if (gameState.board[h].squares[w].contents === "BOMB") return
 
-	// if this square is next to a mine, stop
+	// if this square is next to a bomb, stop
 	if (gameState.board[h].squares[w].score != 0) return
 
 	// okay, this is a blank square, 
@@ -224,10 +260,12 @@ function clickSquare(h, w, gameState, setGameState) {
 }
 
 function Square({ square, gameState, setGameState, setScaredFace }) {
-	// console.log(square)
-	let tile;
+	let tile
 	let classes = "square"
 	const { w, h } = square.coords
+	//
+	// Draw a tile on a board square
+	//
 	if ((square.state === "HIDDEN") || (square.state === "FLAGGED")) {
 		if (square.state === "FLAGGED")
 			tile = flagTile
@@ -236,23 +274,25 @@ function Square({ square, gameState, setGameState, setScaredFace }) {
 			classes += " clickable"
 		}
 		return < div className={classes}
+			// click to reveal
 			onClick={(e) => {
 				clickSquare(h, w, gameState, setGameState)
 				e.preventDefault()
 			}}
+			// right-click to place a flag
 			onContextMenu={(e) => {
 				plantFlag(h, w, gameState, setGameState)
 				e.preventDefault()
 			}}
+			// show a scared face when mouse pressed on an unturned tile
 			onMouseDown={(e) => {
 				if (e.button === 0) {
-					// left click only
-					// console.log("scared face")
+					// right click only
 					setScaredFace(true)
 				}
 			}}
+			// remove scared face as soon as you lift the mouse
 			onMouseUp={(e) => {
-				// console.log("happy face")
 				setScaredFace(false)
 			}}
 		>
@@ -261,7 +301,7 @@ function Square({ square, gameState, setGameState, setScaredFace }) {
 	}
 	else if (square.contents === "BOMB")
 		tile = bombTile
-	else if (square.contents === "WONG")
+	else if (square.contents === "WRONG")
 		tile = wrongBombTile
 	else if (square.contents === "CRATER")
 		tile = craterTile
