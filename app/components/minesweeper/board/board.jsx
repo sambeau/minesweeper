@@ -125,9 +125,16 @@ function plantFlag(h, w, gameState, setGameState) {
 	// have we already checked this square?
 	if (gameState.board[h].squares[w].state === "SEEN") return;
 
-	setGameState(prevState => {
+	setGameState(prevGameState => {
 		// update game state to account for the flag
-		gameState = JSON.parse(JSON.stringify(prevState))  // quick & dirty deep copy
+		gameState = JSON.parse(JSON.stringify(prevGameState))  // quick & dirty deep copy
+
+		// if ths is the first move of the game
+		// then start the timer
+		if (prevGameState.result === "waiting")
+			gameState.result = "playing"
+
+		// Place a flag
 
 		// flagging has more to it than first appears :-
 		//
@@ -140,13 +147,13 @@ function plantFlag(h, w, gameState, setGameState) {
 			// already flagged
 			// remove the flag
 			gameState.board[h].squares[w].state = "HIDDEN"
-			gameState.flagsLeft = prevState.flagsLeft + 1
+			gameState.flagsLeft = prevGameState.flagsLeft + 1
 		} else {
 			// not flagged
 			// add a flag if there's one left to use
-			if (prevState.flagsLeft > 0) {
+			if (prevGameState.flagsLeft > 0) {
 				gameState.board[h].squares[w].state = "FLAGGED"
-				gameState.flagsLeft = prevState.flagsLeft - 1
+				gameState.flagsLeft = prevGameState.flagsLeft - 1
 
 				// if all  flags are used, check to see if you've won
 				if (gameState.flagsLeft === 0) {
@@ -166,7 +173,7 @@ function plantFlag(h, w, gameState, setGameState) {
 						}
 					}
 					// If al your flags are correct, then you've won
-					if (correctFlags === prevState.bombs) {
+					if (correctFlags === prevGameState.bombs) {
 						//
 						// YAY! YOU'VE WON!
 						//
@@ -190,9 +197,11 @@ function plantFlag(h, w, gameState, setGameState) {
 
 function clickSquare(h, w, gameState, setGameState) {
 
-	// is this square offf the board?
+	// is this square off the board?
+	// this can happen when we recursively open the square around
 	if ((h < 0) || (h >= gameState.height)) return
 	if ((w < 0) || (w >= gameState.width)) return
+
 	// Is this square already open?
 	if (gameState.board[h].squares[w].state !== "HIDDEN") return;
 	// have we already checked this square?
@@ -205,6 +214,13 @@ function clickSquare(h, w, gameState, setGameState) {
 	setGameState(prevGameState => {
 
 		gameState = JSON.parse(JSON.stringify(prevGameState)) // quick & dirty deep copy
+
+		// if ths is the first move of the game
+		// then start the timer
+		if (prevGameState.result === "waiting")
+			gameState.result = "playing"
+
+		// reveal the tile
 		gameState.board[h].squares[w].state = "SEEN"
 
 		if (gameState.board[h].squares[w].contents === "BOMB") {
