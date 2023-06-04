@@ -23,7 +23,7 @@ export function Minesweeper() {
 		width: 8,
 		height: 8,
 		bombs: 4,
-		flagsLeft: 4,
+		flagsLeft: 4, // bombs and flagsLeft should be the same
 		result: "playing" // "playing", "win", "lose"
 	}
 
