@@ -7,10 +7,11 @@ export function links() {
 	return [...smileyStyles(), ...counterStyles(), { rel: "stylesheet", href: styles }];
 }
 
-export function Window({ gameState, timeTaken, resetGame, children }) {
+export function Window({ gameState, timeTaken, resetGame, scaredFace, children }) {
 	let mood = "happy"
 	if (gameState.result === "win") mood = "cool"
 	if (gameState.result === "lose") mood = "dead"
+	if (scaredFace) mood = "scared" // this takes precedence over all others
 	return (
 		<div className="window">
 			<header>

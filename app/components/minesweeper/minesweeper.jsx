@@ -11,6 +11,10 @@ export function links() {
 	return [...windowLinks(), ...boardLinks(), { rel: "stylesheet", href: styles }];
 }
 
+//
+// All shared state lives here, it should probably be a context, but for now I'm passing it around
+// 
+
 export function Minesweeper() {
 	//
 	// Beginner (8x8, 10 mines), Intermediate (16x16, 40 mines) and Expert (24x24, 99 mines)
@@ -23,10 +27,13 @@ export function Minesweeper() {
 		result: "playing" // "playing", "win", "lose"
 	}
 
+	// All the shared state. I might combine game and board them to make joint updates easier
+	//
 	const [gameState, setGameState] = useState(initialGameState)
 	const [board, setBoard] = useState(newBoard(gameState))
-
+	const [scaredFace, setScaredFace] = useState(false)
 	const timeTaken = useCounter(0) // { count, setCount, increment, decrement, reset } 
+
 	const doOnTick = () => {
 		if (gameState.result === "playing")
 			timeTaken.increment()
@@ -42,11 +49,18 @@ export function Minesweeper() {
 
 	return (
 		<>
-			<Window gameState={gameState} timeTaken={timeTaken.count} resetGame={resetGame}>
-				<Board gameState={gameState}
+			<Window
+				gameState={gameState}
+				timeTaken={timeTaken.count}
+				resetGame={resetGame}
+				scaredFace={scaredFace}
+			>
+				<Board
+					gameState={gameState}
 					setGameState={setGameState}
 					board={board}
 					setBoard={setBoard}
+					setScaredFace={setScaredFace}
 				/>
 			</Window>
 		</>

@@ -70,6 +70,7 @@ export function newBoard(gameState) {
 			}
 		}
 	}
+
 	// randomly place bombs 
 	let bombsleft = bombs;
 	while (bombsleft > 0) {
@@ -79,6 +80,7 @@ export function newBoard(gameState) {
 		board[h].squares[w].contents = "BOMB"
 		bombsleft = bombsleft - 1
 	}
+
 	// calculate scores
 	for (let h = 0; h < height; h++) {
 		for (let w = 0; w < width; w++) {
@@ -97,6 +99,13 @@ function plantFlag(h, w, board, setBoard, gameState, setGameState) {
 	setGameState(prevState => {
 		// update game state to account for the flag
 		gameState = JSON.parse(JSON.stringify(prevState))
+
+		// flagging has more to it than first appears :-
+		//
+		// 1) You only get as mang flags as there are bombs.
+		// 2) We can only flag if we have a flag left
+		// 3) If we remove a flag, we get to use it again
+		// 4) Once we place our final flag, we need to check if we've won the game
 
 		if (board[h].squares[w].state === "FLAGGED") {
 			// if (prevState.flagsLeft < prevState.bombs)
@@ -233,7 +242,7 @@ function clickSquare(h, w, board, setBoard, gameState, setGameState) {
 	})
 }
 
-function Square({ square, board, setBoard, gameState, setGameState }) {
+function Square({ square, board, setBoard, gameState, setGameState, setScaredFace }) {
 	// console.log(square)
 	let tile;
 	let classes = "square"
@@ -254,6 +263,17 @@ function Square({ square, board, setBoard, gameState, setGameState }) {
 				plantFlag(h, w, board, setBoard, gameState, setGameState)
 				e.preventDefault()
 			}}
+			onMouseDown={(e) => {
+				if (e.button === 0) {
+					// left click only
+					console.log("scared face")
+					setScaredFace(true)
+				}
+			}}
+			onMouseUp={(e) => {
+				console.log("happy face")
+				setScaredFace(false)
+			}}
 		>
 			<img alt="" src={tile} />
 		</div >
@@ -267,14 +287,19 @@ function Square({ square, board, setBoard, gameState, setGameState }) {
 	else
 		tile = scoreTiles[square.score]
 
-	return <div className={classes} onClick={(e) => {
-		e.preventDefault()
-	}} onContextMenu={(e) => {
-		e.preventDefault()
-	}}><img alt="" src={tile} /></div>
+	return <div className={classes}
+		onClick={(e) => {
+			e.preventDefault()
+		}}
+		onContextMenu={(e) => {
+			e.preventDefault()
+		}}
+
+	>
+		<img alt="" src={tile} /></div>
 }
 
-export function Board({ gameState, setGameState, board, setBoard }) {
+export function Board({ gameState, setGameState, board, setBoard, setScaredFace }) {
 
 	return <div className="board">
 		{board.map((row) =>
@@ -286,6 +311,7 @@ export function Board({ gameState, setGameState, board, setBoard }) {
 						setBoard={setBoard}
 						gameState={gameState}
 						setGameState={setGameState}
+						setScaredFace={setScaredFace}
 						key={square.id} />
 				)
 			}</div>
