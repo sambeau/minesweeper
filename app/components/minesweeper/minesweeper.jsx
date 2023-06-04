@@ -19,9 +19,11 @@ export function Minesweeper() {
 	//
 	// Beginner (8x8, 10 mines), Intermediate (16x16, 40 mines) and Expert (24x24, 99 mines)
 	//
+	// I'm going 10x!0 with 10 bombs as it's a little more casual
+	//
 	const initialGameState = {
-		width: 8,
-		height: 8,
+		width: 10,
+		height: 10,
 		bombs: 10, // I find bombs easier to see in code 
 		flagsLeft: 10, // bombs and flagsLeft should be the same
 		result: "waiting", // "waiting", "playing", "win", "lose"
