@@ -1,5 +1,7 @@
 # 💣 Minesweeper
 
+![Screenshot](public/screenshot.png)
+
 A small minesweeper clone I created as a fun exercise for my portfolio. It does all the usual things a minesweeper does (except '?' tiles, as I don't like those).
 
 Oh, and I went with 8x8 sized board with 10 mines, rather than 16x16/40. It's a little easier, so a little more casual for a portfolio.
